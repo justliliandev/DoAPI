@@ -1,7 +1,6 @@
 {
   "block.doapi.standard": "Completionist Banner",
   "block.doapi.wall_standard": "Completionist Wall Banner",
-
   "sound.doapi.cabinet_close": "Closing Cabinet",
   "sound.doapi.cabinet_open": "Opening Cabinet",
   "sound.doapi.drawer_close": "Closing Drawer",
@@ -20,5 +19,13 @@
   "sound.doapi.beer_elemental_hurt": "Booze Hurt",
   "sound.doapi.beer_elemental_attack": "Booze Attack",
   "sound.doapi.timer_ticking": "Ticking Timer",
+  "sound.doapi.crafting_bowl_stirring": "Crafting Bowl Stirring",
+  "sound.doapi.mincer_cranking": "Mincer Cranking",
+  "sound.doapi.water_sprinkler": "Water Sprinkler",
+  "sound.doapi.roaster_cooking": "Roaster Cooking",
+  "sound.doapi.cooking_pot_boiling": "Cooking Pot Boiling",
+  "sound.doapi.stove_crackling": "Stove Crackling",
+  "sound.doapi.cart_moving": "Cart Moving",
+  "sound.doapi.cooking_pot_hit": "Cooking Pot Hit",
   "pack.source.builtinMod": "built-in: %s"
 }
