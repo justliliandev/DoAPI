@@ -8,6 +8,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -19,7 +20,9 @@ import net.minecraft.world.inventory.Slot;
 @Environment(EnvType.CLIENT)
 public abstract class AbstractRecipeBookGUIScreen<T extends AbstractPrivateRecipeScreenHandler> extends AbstractContainerScreen<T> {
     private final ResourceLocation BACKGROUND;
-    private static final ResourceLocation RECIPE_BUTTON_TEXTURE = new DoApiRL("textures/gui/recipe_button.png"); // Use own texture to prevent mods to remove our recipe book
+    private static final ResourceLocation RECIPE_BUTTON_TEXTURE = DoApiRL.asResourceLocation("textures/gui/recipe_button.png"); // Use own texture to prevent mods to remove our recipe book
+    private static final WidgetSprites RECIPE_BUTTON = new WidgetSprites(DoApiRL.asResourceLocation("textures/gui/recipe_button_basic.png"),
+            DoApiRL.asResourceLocation("textures/gui/recipe_button_focused.png"));
     public final PrivateRecipeBookWidget recipeBook;
     private boolean narrow;
 
@@ -35,7 +38,7 @@ public abstract class AbstractRecipeBookGUIScreen<T extends AbstractPrivateRecip
         this.narrow = this.width < 379;
         this.recipeBook.initialize(this.width, this.height, this.minecraft, this.narrow, this.menu);
         this.leftPos = this.recipeBook.findLeftEdge(this.width, this.imageWidth);
-        this.addRenderableWidget(new ImageButton(this.leftPos + 5, this.topPos + 25, 20, 18, 0, 0, 19, getRecipeButtonTexture(), (button) -> {
+        this.addRenderableWidget(new ImageButton(this.leftPos + 5, this.topPos + 25, 20, 18, getRecipeButtonTexture(), (button) -> {
             this.recipeBook.toggleOpen();
             this.leftPos = this.recipeBook.findLeftEdge(this.width, this.imageWidth);
             button.setPosition(this.leftPos + 5, this.topPos + 25);
@@ -45,7 +48,7 @@ public abstract class AbstractRecipeBookGUIScreen<T extends AbstractPrivateRecip
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, delta);
         if (this.recipeBook.isOpen() && this.narrow) {
             this.renderBg(guiGraphics, delta, mouseX, mouseY);
             this.recipeBook.render(guiGraphics, mouseX, mouseY, delta);
@@ -121,7 +124,7 @@ public abstract class AbstractRecipeBookGUIScreen<T extends AbstractPrivateRecip
         super.removed();
     }
 
-    public ResourceLocation getRecipeButtonTexture() {
-        return RECIPE_BUTTON_TEXTURE;
+    public WidgetSprites getRecipeButtonTexture() {
+        return RECIPE_BUTTON;
     }
 }

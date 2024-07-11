@@ -85,7 +85,7 @@ public class ConfigUtil {
             JsonElement load = getConfig(path.toString());
 
             DataResult<Pair<T, JsonElement>> decode = codec.decode(ops, load);
-            Optional<DataResult.PartialResult<Pair<T, JsonElement>>> error = decode.error();
+            Optional<DataResult.Error<Pair<T, JsonElement>>> error = decode.error();
             if (error.isPresent()) {
                 throw new IllegalArgumentException("["+MODID+"] Couldn't read 2 " + path + ", crashing instead. Maybe try to delete the config files!\n" + error.get().message());
             }
@@ -97,7 +97,7 @@ public class ConfigUtil {
 
     public static <T> void createConfig(Path path, Codec<T> codec, Map<String, String> comments, DynamicOps<JsonElement> ops, T from, boolean sorted, String header) {
         DataResult<JsonElement> dataResult = codec.encodeStart(ops, from);
-        Optional<DataResult.PartialResult<JsonElement>> error = dataResult.error();
+        Optional<DataResult.Error<JsonElement>> error = dataResult.error();
         if (error.isPresent()) {
             throw new IllegalArgumentException(String.format("Jankson file creation for \"%s\" failed due to the following error(s):\n%s", path.toString(), error.get().message()));
         }

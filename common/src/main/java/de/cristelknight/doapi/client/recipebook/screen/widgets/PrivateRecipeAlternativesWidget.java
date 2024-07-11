@@ -18,14 +18,18 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4fStack;
 
 import java.util.Iterator;
 import java.util.List;
 
+// THIS CLASS IS NOT PORTED AND NOT TESTED, PLEASE AVOID USING IT
 @Environment(EnvType.CLIENT)
+@Deprecated()
 public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventListener {
-    static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("textures/gui/recipe_book.png");
+    static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/recipe_book.png");
     private final List<CustomAlternativeButtonWidget> alternativeButtons = Lists.newArrayList();
     private boolean visible;
     private int buttonX;
@@ -84,7 +88,7 @@ public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventList
         this.visible = true;
         this.alternativeButtons.clear();
 
-        this.alternativeButtons.add(new CustomAlternativeButtonWidget(this.buttonX + 6, this.buttonY + 6, this.recipe, bl));
+        //this.alternativeButtons.add(new CustomAlternativeButtonWidget(this.buttonX + 6, this.buttonY + 6, this.recipe, bl));
 
         this.lastClickedRecipe = null;
     }
@@ -104,7 +108,7 @@ public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventList
                 alternativeButtonWidget = var6.next();
             } while (!alternativeButtonWidget.mouseClicked(mouseX, mouseY, button));
 
-            this.lastClickedRecipe = alternativeButtonWidget.recipe;
+            //this.lastClickedRecipe = alternativeButtonWidget.recipe;
             return true;
         }
     }
@@ -177,21 +181,21 @@ public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventList
 
     @Environment(EnvType.CLIENT)
     private class CustomAlternativeButtonWidget extends AbstractWidget implements PlaceRecipe<Ingredient> {
-        final Recipe<?> recipe;
+        final RecipeHolder<?> recipeHolder;
         private final boolean craftable;
         protected final List<InputSlot> slots = Lists.newArrayList();
 
-        public CustomAlternativeButtonWidget(int x, int y, Recipe<?> recipe, boolean craftable) {
+        public CustomAlternativeButtonWidget(int x, int y, RecipeHolder<?> recipeHolder1, boolean craftable) {
             super(x, y, 200, 20, CommonComponents.EMPTY);
             this.width = 24;
             this.height = 24;
-            this.recipe = recipe;
+            this.recipeHolder = recipeHolder1;
             this.craftable = craftable;
-            this.alignRecipe(recipe);
+            this.alignRecipe(recipeHolder1);
         }
 
-        protected void alignRecipe(Recipe<?> recipe) {
-            this.placeRecipe(3, 3, -1, recipe, recipe.getIngredients().iterator(), 0);
+        protected void alignRecipe(RecipeHolder<?> recipeHolder) {
+            //this.placeRecipe(3, 3, -1, recipeHolder, recipe.getIngredients().iterator(), 0);
         }
 
         protected void updateWidgetNarration(NarrationElementOutput builder) {
@@ -219,22 +223,27 @@ public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventList
                 j += 26;
             }
             guiGraphics.blit(BACKGROUND_TEXTURE, this.getX(), this.getY(), i, j, this.width, this.height);
-            PoseStack poseStack = RenderSystem.getModelViewStack();
-            poseStack.pushPose();
-            poseStack.translate((this.getX() + 2), (this.getY() + 2), 125.0);
+            Matrix4fStack poseStack = RenderSystem.getModelViewStack();
+            poseStack.pushMatrix();
+            poseStack.translate((this.getX() + 2), (this.getY() + 2), 125.0F);
 
             for (InputSlot inputSlot : this.slots) {
-                poseStack.pushPose();
-                poseStack.translate(inputSlot.y, inputSlot.x, 0.0);
+                poseStack.pushMatrix();
+                poseStack.translate(inputSlot.y, inputSlot.x, 0.0F);
                 poseStack.scale(0.375F, 0.375F, 1.0F);
-                poseStack.translate(-8.0, -8.0, 0.0);
+                poseStack.translate(-8.0F, -8.0F, 0.0F);
                 RenderSystem.applyModelViewMatrix();
                 guiGraphics.renderItem(inputSlot.stacks[Mth.floor(PrivateRecipeAlternativesWidget.this.time / 30.0F) % inputSlot.stacks.length], 0, 0);
-                poseStack.popPose();
+                poseStack.popMatrix();
             }
 
-            poseStack.popPose();
+            poseStack.popMatrix();
             RenderSystem.applyModelViewMatrix();
+        }
+
+        @Override
+        public void addItemToSlot(Ingredient object, int i, int j, int k, int l) {
+            this.addItemToSlot(Ingredient.of(object.getItems()), i, j, k, l);
         }
 
         @Environment(EnvType.CLIENT)

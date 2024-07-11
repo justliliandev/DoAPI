@@ -37,14 +37,14 @@ public class Util {
     }
 
     public static <T extends Block> RegistrySupplier<T> registerWithoutItem(DeferredRegister<Block> register, Registrar<Block> registrar, ResourceLocation path, Supplier<T> block) {
-        if (Platform.isForge()) {
+        if (Platform.isNeoForge()) {
             return register.register(path.getPath(), block);
         }
         return registrar.register(path, block);
     }
 
     public static <T extends Item> RegistrySupplier<T> registerItem(DeferredRegister<Item> register, Registrar<Item> registrar, ResourceLocation path, Supplier<T> itemSupplier) {
-        if (Platform.isForge()) {
+        if (Platform.isNeoForge()) {
             return register.register(path.getPath(), itemSupplier);
         }
         return registrar.register(path, itemSupplier);

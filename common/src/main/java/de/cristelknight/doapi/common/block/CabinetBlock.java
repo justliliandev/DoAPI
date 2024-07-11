@@ -1,13 +1,14 @@
 package de.cristelknight.doapi.common.block;
 
+import com.mojang.serialization.MapCodec;
 import de.cristelknight.doapi.common.block.entity.CabinetBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Supplier;
 
 @SuppressWarnings("deprecation, unused")
-public class CabinetBlock extends BaseEntityBlock {
+public abstract class CabinetBlock extends BaseEntityBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
 	private final Supplier<SoundEvent> openSound;
@@ -43,15 +44,14 @@ public class CabinetBlock extends BaseEntityBlock {
 	}
 
 	@Override
-	public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (world.isClientSide) {
+	protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
+		if(level.isClientSide){
 			return InteractionResult.SUCCESS;
 		} else {
-			BlockEntity blockEntity = world.getBlockEntity(pos);
-			if (blockEntity instanceof CabinetBlockEntity blockEntity1) {
+			BlockEntity blockEntity = level.getBlockEntity(blockPos);
+			if(blockEntity instanceof CabinetBlockEntity blockEntity1){
 				player.openMenu(blockEntity1);
 			}
-
 			return InteractionResult.CONSUME;
 		}
 	}
@@ -82,10 +82,10 @@ public class CabinetBlock extends BaseEntityBlock {
 
 	@Override
 	public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-		if (itemStack.hasCustomHoverName()) {
+		if (itemStack.has(DataComponents.CUSTOM_NAME)) {
 			BlockEntity blockEntity = world.getBlockEntity(pos);
 			if (blockEntity instanceof CabinetBlockEntity blockEntity1) {
-				blockEntity1.setCustomName(itemStack.getHoverName());
+				blockEntity1.getCustomName();
 			}
 		}
 	}

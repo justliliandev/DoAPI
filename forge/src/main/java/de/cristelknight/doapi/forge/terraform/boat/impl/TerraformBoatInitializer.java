@@ -20,12 +20,12 @@ public final class TerraformBoatInitializer {
 	// Hack that prevents the following crash during client startup:
 	// Caused by: java.lang.NoClassDefFoundError: Could not initialize class com.terraformersmc.terraform.boat.api.TerraformBoatTypeRegistry
 
-	private static final ResourceLocation BOAT_ID = new ResourceLocation(TerraformApiForge.TERRAFORM_MOD_ID, "boat");
+	private static final ResourceLocation BOAT_ID = ResourceLocation.fromNamespaceAndPath(TerraformApiForge.TERRAFORM_MOD_ID, "boat");
 	public static final RegistrySupplier<EntityType<TerraformBoatEntity>> BOAT =  create("boat", () -> EntityType.Builder.<TerraformBoatEntity>of(TerraformBoatEntity::new, MobCategory.MISC)
 			.sized(1.375f, 0.5625f)
 		.build(BOAT_ID.toString()));
 
-	private static final ResourceLocation CHEST_BOAT_ID = new ResourceLocation(TerraformApiForge.TERRAFORM_MOD_ID, "chest_boat");
+	private static final ResourceLocation CHEST_BOAT_ID = ResourceLocation.fromNamespaceAndPath(TerraformApiForge.TERRAFORM_MOD_ID, "chest_boat");
 	public static final RegistrySupplier<EntityType<TerraformChestBoatEntity>> CHEST_BOAT = create("chest_boat",
 			() -> EntityType.Builder.<TerraformChestBoatEntity>of(TerraformChestBoatEntity::new, MobCategory.MISC)
 		.sized(1.375f, 0.5625f)
@@ -36,6 +36,6 @@ public final class TerraformBoatInitializer {
 	}
 
 	public static <T extends EntityType<?>> RegistrySupplier<T> create(final String path, final Supplier<T> type) {
-		return ENTITY_TYPES.register(new ResourceLocation(TerraformApiForge.TERRAFORM_MOD_ID, path), type);
+		return ENTITY_TYPES.register(ResourceLocation.fromNamespaceAndPath(TerraformApiForge.TERRAFORM_MOD_ID, path), type);
 	}
 }

@@ -1,7 +1,7 @@
 package de.cristelknight.doapi.forge.terraform.boat.impl.client;
 
 import de.cristelknight.doapi.forge.terraform.boat.impl.TerraformBoatInitializer;
-import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 public final class TerraformBoatClientInitializer  {
 

@@ -1,5 +1,6 @@
 package de.cristelknight.doapi.common.block;
 
+import com.mojang.serialization.MapCodec;
 import de.cristelknight.doapi.common.block.entity.StandardBlockEntity;
 import de.cristelknight.doapi.common.registry.DoApiBlockEntityTypes;
 import net.minecraft.core.BlockPos;
@@ -25,14 +26,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class StandardBlock extends BaseEntityBlock
-{
+public class StandardBlock extends BaseEntityBlock {
+    public static final MapCodec<StandardBlock> CODEC = simpleCodec(StandardBlock::new);
     public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
     private static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 16.0D, 12.0D);
 
     public StandardBlock(Properties properties) {
         super(properties);
         makeDefaultState();
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override
@@ -54,16 +60,15 @@ public class StandardBlock extends BaseEntityBlock
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter blockGetter, BlockPos blockPos, BlockState blockState) {
-        Optional<StandardBlockEntity> entity = blockGetter.getBlockEntity(blockPos, DoApiBlockEntityTypes.STANDARD.get());
+    public ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
+        Optional<StandardBlockEntity> entity = levelReader.getBlockEntity(blockPos, DoApiBlockEntityTypes.STANDARD.get());
         if(entity.isPresent()){
             Item item = entity.get().getItem();
             if(item != null){
                 return new ItemStack(item);
             }
         }
-
-        return super.getCloneItemStack(blockGetter, blockPos, blockState);
+        return super.getCloneItemStack(levelReader, blockPos, blockState);
     }
 
     @Nullable

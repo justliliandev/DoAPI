@@ -38,13 +38,13 @@ public abstract class StorageBlock extends FacingBlock implements EntityBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (!(blockEntity instanceof StorageBlockEntity shelfBlockEntity)) {
+    protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
+        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+        if(!(blockEntity instanceof StorageBlockEntity shelfBlockEntity)){
             return InteractionResult.PASS;
         }
 
-        Optional<Tuple<Float, Float>> optional = Util.getRelativeHitCoordinatesForBlockFace(hit, state.getValue(FACING), unAllowedDirections());
+        Optional<Tuple<Float, Float>> optional = Util.getRelativeHitCoordinatesForBlockFace(blockHitResult, blockState.getValue(FACING), unAllowedDirections());
         if (optional.isEmpty()) {
             return InteractionResult.PASS;
         }
@@ -54,20 +54,18 @@ public abstract class StorageBlock extends FacingBlock implements EntityBlock {
             return InteractionResult.PASS;
         }
         if (!shelfBlockEntity.getInventory().get(i).isEmpty()) {
-            remove(world, pos, player, shelfBlockEntity, i);
-            return InteractionResult.sidedSuccess(world.isClientSide);
+            remove(level, blockPos, player, shelfBlockEntity, i);
+            return InteractionResult.sidedSuccess(level.isClientSide);
         } else {
-            ItemStack stack = player.getItemInHand(hand);
+            ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
             if (!stack.isEmpty() && canInsertStack(stack)) {
-                add(world, pos, player, shelfBlockEntity, stack, i);
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                add(level, blockPos, player, shelfBlockEntity, stack, i);
+                return InteractionResult.sidedSuccess(level.isClientSide);
             } else {
                 return InteractionResult.CONSUME;
             }
         }
     }
-
-
 
     public void add(Level level, BlockPos blockPos, Player player, StorageBlockEntity shelfBlockEntity, ItemStack itemStack, int i) {
         if (!level.isClientSide) {

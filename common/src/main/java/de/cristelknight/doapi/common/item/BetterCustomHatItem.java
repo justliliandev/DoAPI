@@ -1,5 +1,6 @@
 package de.cristelknight.doapi.common.item;
 
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
@@ -10,8 +11,8 @@ public class BetterCustomHatItem extends CustomHatItem {
     public final ResourceLocation texture;
     public final float offset;
 
-    public BetterCustomHatItem(ArmorMaterial material, ArmorItem.Type type, Item.Properties settings, ResourceLocation texture, float offset) {
-        super(material, type, settings);
+    public BetterCustomHatItem(Holder<ArmorMaterial> holder, ArmorItem.Type type, Item.Properties settings, ResourceLocation texture, float offset) {
+        super(holder, type, settings);
         this.texture = texture;
         this.offset = offset;
     }

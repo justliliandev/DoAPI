@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class CabinetWallBlock extends CabinetBlock {
+public abstract class CabinetWallBlock extends CabinetBlock {
     public CabinetWallBlock(Properties settings, RegistrySupplier<SoundEvent> openSound, RegistrySupplier<SoundEvent> closeSound) {
         super(settings, openSound, closeSound);
     }

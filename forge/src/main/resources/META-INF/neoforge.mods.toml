@@ -1,10 +1,11 @@
 modLoader = "javafml"
-loaderVersion = "[47,)"
+loaderVersion = "[4,)"
+#issueTrackerURL = ""
 license = "LGPL-3.0-only"
 
 [[mods]]
 modId = "doapi"
-version = "${version}"
+version = "1.2.15"
 displayName = "[Let's Do] API"
 authors = "Cristelknight, BaumeisterJO"
 logoFile = "pack.png"
@@ -23,22 +24,22 @@ Terraform Wood Api, but for forge
 '''
 
 [[dependencies.doapi]]
-modId = "forge"
-mandatory = true
-versionRange = "[47.0.19,)"
+modId = "neoforge"
+type = "required"
+versionRange = "[21.0,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.doapi]]
 modId = "minecraft"
-mandatory = true
-versionRange = "[1.20,)"
+type = "required"
+versionRange = "[1.21,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.doapi]]
 modId = "architectury"
-mandatory = true
+type = "required"
 versionRange = "[9.0.8,)"
 ordering = "AFTER"
 side = "BOTH"

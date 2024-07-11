@@ -37,7 +37,7 @@ public class CustomBoatEntityRenderer extends BoatRenderer {
 			String prefix = raft ? (chest ? "chest_raft/" : "raft/") : (chest ? "chest_boat/" : "boat/");
 
 			ResourceLocation id = entry.getKey();
-			ResourceLocation textureId = new ResourceLocation(id.getNamespace(), "textures/entity/" + prefix + id.getPath() + ".png");
+			ResourceLocation textureId = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/entity/" + prefix + id.getPath() + ".png");
 
 			ModelLayerLocation layer = TerraformBoatClientHelper.getLayer(id, raft, chest);
 			ListModel<Boat> model = createModel(context.bakeLayer(layer), raft, chest);
@@ -70,7 +70,7 @@ public class CustomBoatEntityRenderer extends BoatRenderer {
 			poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
 			listModel.setupAnim(boat, g, 0.0f, -0.1f, 0.0f, 0.0f);
 			VertexConsumer vertexConsumer = multiBufferSource.getBuffer(listModel.renderType(resourceLocation));
-			listModel.renderToBuffer(poseStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f);
+			listModel.renderToBuffer(poseStack, vertexConsumer, i, OverlayTexture.NO_OVERLAY);
 			if (!boat.isUnderWater()) {
 				VertexConsumer vertexConsumer2 = multiBufferSource.getBuffer(RenderType.waterMask());
 				if (listModel instanceof WaterPatchModel waterPatchModel) {

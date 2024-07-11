@@ -5,21 +5,26 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import de.cristelknight.doapi.DoApi;
 import de.cristelknight.doapi.forge.common.packs.BuiltInPackRegistry;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.repository.BuiltInPackSource;
+import net.minecraft.server.packs.repository.KnownPack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fml.loading.LoadingModList;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.resource.PathPackResources;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.LoadingModList;
+import net.neoforged.fml.loading.moddiscovery.ModInfo;
+import net.neoforged.neoforgespi.locating.IModFile;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 public class DoApiEPImpl {
     @SuppressWarnings("unchecked")
@@ -39,7 +44,9 @@ public class DoApiEPImpl {
         recipes.add(newRecipe);
         forgeRecipe.add("recipes", recipes);
 
-        return (T) ConditionalRecipe.SERIALZIER.fromJson(recipeId, forgeRecipe);
+        // TODO
+        //return (T) ConditionalRecipe.SERIALZIER.fromJson(recipeId, forgeRecipe);
+        return null;
     }
 
     public static boolean isModLoaded(String modid) {
@@ -49,12 +56,21 @@ public class DoApiEPImpl {
         }
         return isModPreLoaded(modid);
     }
+
     public static void registerBuiltInPack(String modId, ResourceLocation location, boolean alwaysEnabled){
+        ModContainer container = ModList.get().getModContainerById(modId).orElse(null);
+        if(container == null){
+            DoApi.LOGGER.warn("Mod container for modId:" + modId + " is null");
+            return;
+        }
         String stringPath = location.getPath();
         Path path = getResourceDirectory(modId, "resourcepacks/" + stringPath);
         if(path == null) return;
         String[] pathElements = stringPath.split("/");
-        BuiltInPackRegistry.packResources.put(location, new Pair<>(new PathPackResources(pathElements[pathElements.length - 1], true, path), alwaysEnabled));
+        BuiltInPackRegistry.packResources.put(location, new Pair<>(new PathPackResources(
+                new PackLocationInfo("mod/" + location, Component.literal(location.getNamespace() + "/" + location.getPath()), PackSource.BUILT_IN, Optional.of(new KnownPack(location.getNamespace(), "mod/" + location, container.getModInfo().getVersion().toString())))
+                 ,path), alwaysEnabled));
+        //         BuiltInPackRegistry.packResources.put(location, new Pair<>(new PathPackResources(pathElements[pathElements.length - 1], true, path), alwaysEnabled));
     }
 
     public static @Nullable Path getResourceDirectory(String modId, String subPath) {

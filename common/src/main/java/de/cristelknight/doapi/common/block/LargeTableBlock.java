@@ -1,5 +1,6 @@
 package de.cristelknight.doapi.common.block;
 
+import com.mojang.serialization.MapCodec;
 import de.cristelknight.doapi.common.util.GeneralUtil;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -34,6 +35,7 @@ import java.util.function.Supplier;
 
 @SuppressWarnings("deprecation")
 public class LargeTableBlock extends HorizontalDirectionalBlock {
+	public static final MapCodec<LargeTableBlock> CODEC = simpleCodec(LargeTableBlock::new);
 	public static final EnumProperty<BedPart> PART = BlockStateProperties.BED_PART;
 
 	private static final Supplier<VoxelShape> voxelShapeSupplier = () -> {
@@ -60,6 +62,11 @@ public class LargeTableBlock extends HorizontalDirectionalBlock {
 		this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(PART, BedPart.FOOT));
 	}
 
+	@Override
+	protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+		return CODEC;
+	}
+
 	public @NotNull BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
 		if (direction == getDirectionTowardsOtherPart(state.getValue(PART), state.getValue(FACING))) {
 			return neighborState.is(this) && neighborState.getValue(PART) != state.getValue(PART) ? state : Blocks.AIR.defaultBlockState();
@@ -72,12 +79,13 @@ public class LargeTableBlock extends HorizontalDirectionalBlock {
 		return part == BedPart.FOOT ? direction : direction.getOpposite();
 	}
 
-	public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+	public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
 		if (!world.isClientSide && player.isCreative()) {
 			removeOtherPart(world, pos, state, player);
 		}
 
 		super.playerWillDestroy(world, pos, state, player);
+		return state;
 	}
 
 	@Nullable

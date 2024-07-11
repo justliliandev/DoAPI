@@ -58,8 +58,8 @@ public class StackableEatableBlock extends Block {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        final ItemStack stack = player.getItemInHand(hand);
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
+        final ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (player.isShiftKeyDown() && stack.isEmpty()) {
             if (!world.isClientSide) {
                 if (state.getValue(STACK_PROPERTY) > 1) {
@@ -92,6 +92,6 @@ public class StackableEatableBlock extends Block {
             GeneralUtil.spawnSlice(world, new ItemStack(this), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, xMotion, yMotion, zMotion);
             return InteractionResult.SUCCESS;
         }
-        return super.use(state, world, pos, player, hand, hit);
+        return super.useWithoutItem(state, world, pos, player, blockHitResult);
     }
 }

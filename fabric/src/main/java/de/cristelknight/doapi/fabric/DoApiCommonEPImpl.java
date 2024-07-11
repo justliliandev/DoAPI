@@ -3,11 +3,10 @@ package de.cristelknight.doapi.fabric;
 import com.terraformersmc.terraform.boat.api.TerraformBoatTypeRegistry;
 import com.terraformersmc.terraform.boat.impl.entity.TerraformBoatEntity;
 import com.terraformersmc.terraform.boat.impl.entity.TerraformChestBoatEntity;
-import com.terraformersmc.terraform.sign.SpriteIdentifierRegistry;
-import com.terraformersmc.terraform.sign.block.TerraformHangingSignBlock;
-import com.terraformersmc.terraform.sign.block.TerraformSignBlock;
-import com.terraformersmc.terraform.sign.block.TerraformWallHangingSignBlock;
-import com.terraformersmc.terraform.sign.block.TerraformWallSignBlock;
+import com.terraformersmc.terraform.sign.api.block.TerraformHangingSignBlock;
+import com.terraformersmc.terraform.sign.api.block.TerraformSignBlock;
+import com.terraformersmc.terraform.sign.api.block.TerraformWallHangingSignBlock;
+import com.terraformersmc.terraform.sign.api.block.TerraformWallSignBlock;
 import de.cristelknight.doapi.fabric.terraform.DoApiBoatTypeHolder;
 import de.cristelknight.doapi.terraform.boat.TerraformBoatType;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
@@ -55,15 +54,16 @@ public class DoApiCommonEPImpl {
     }
 
     public static Block getSign(ResourceLocation signTextureId) {
-        return new TerraformSignBlock(signTextureId, BlockBehaviour.Properties.copy(Blocks.OAK_SIGN));
+        return new TerraformSignBlock(signTextureId, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SIGN));
     }
 
     public static Block getWallSign(ResourceLocation signTextureId) {
-        return new TerraformWallSignBlock(signTextureId, BlockBehaviour.Properties.copy(Blocks.OAK_SIGN));
+        return new TerraformWallSignBlock(signTextureId, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SIGN));
     }
 
     public static void addSignSprite(ResourceLocation signTextureId) {
-        SpriteIdentifierRegistry.INSTANCE.addIdentifier(new Material(Sheets.SIGN_SHEET, signTextureId));
+        // TODO: Deprecated by Terraformor's API
+        //SpriteIdentifierRegistry.INSTANCE.addIdentifier(new Material(Sheets.SIGN_SHEET, signTextureId));
     }
 
     public static Map<ResourceLocation, Boolean> getAllDoApiBoatTypeNamesAndRaft() {
@@ -77,11 +77,11 @@ public class DoApiCommonEPImpl {
     }
 
     public static Block getHangingSign(ResourceLocation hangingSignTextureId, ResourceLocation hangingSignGuiTextureId) {
-        return new TerraformHangingSignBlock(hangingSignTextureId, hangingSignGuiTextureId, BlockBehaviour.Properties.copy(Blocks.OAK_HANGING_SIGN));
+        return new TerraformHangingSignBlock(hangingSignTextureId, hangingSignGuiTextureId, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_HANGING_SIGN));
     }
 
     public static Block getWallHangingSign(ResourceLocation hangingSignTextureId, ResourceLocation hangingSignGuiTextureId) {
-        return new TerraformWallHangingSignBlock(hangingSignTextureId, hangingSignGuiTextureId, BlockBehaviour.Properties.copy(Blocks.OAK_HANGING_SIGN));
+        return new TerraformWallHangingSignBlock(hangingSignTextureId, hangingSignGuiTextureId, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_HANGING_SIGN));
     }
 
 }

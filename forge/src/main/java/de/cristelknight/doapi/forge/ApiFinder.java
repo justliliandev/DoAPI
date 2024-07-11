@@ -3,9 +3,9 @@ package de.cristelknight.doapi.forge;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import de.cristelknight.doapi.DoApi;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforgespi.language.IModInfo;
+import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 
 import java.util.List;

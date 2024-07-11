@@ -10,7 +10,7 @@ public class TerraformSignBlock extends StandingSignBlock implements TerraformSi
 	private final ResourceLocation texture;
 
 	public TerraformSignBlock(ResourceLocation texture, Properties settings) {
-		super(BlockSettingsLock.lock(settings), WoodType.OAK);
+		super(WoodType.OAK, BlockSettingsLock.lock(settings));
 		this.texture = texture;
 	}
 

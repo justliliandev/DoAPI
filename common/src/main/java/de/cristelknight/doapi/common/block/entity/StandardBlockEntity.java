@@ -4,6 +4,7 @@ import de.cristelknight.doapi.DoApi;
 import de.cristelknight.doapi.common.item.StandardItem;
 import de.cristelknight.doapi.common.registry.DoApiBlockEntityTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -26,18 +27,19 @@ public class StandardBlockEntity extends BlockEntity implements BlockEntityTicke
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         if(stack == null) stack = ItemStack.EMPTY;
-        stack.save(tag);
-        nbt.put("stack", tag);
-        super.saveAdditional(nbt);
+        stack.save(provider);
+        compoundTag.put("stack", tag);
+        super.saveAdditional(compoundTag, provider);
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
-        stack = ItemStack.of(nbt.getCompound("stack"));
+    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+        super.loadAdditional(compoundTag, provider);
+        CompoundTag tag = compoundTag.getCompound("stack");
+        stack = ItemStack.parse(this.level.registryAccess(), compoundTag.getCompound("Item")).get();
     }
 
     public void fromItem(ItemStack stack){
@@ -58,8 +60,8 @@ public class StandardBlockEntity extends BlockEntity implements BlockEntityTicke
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        return this.saveWithoutMetadata(provider);
     }
 
     @Override

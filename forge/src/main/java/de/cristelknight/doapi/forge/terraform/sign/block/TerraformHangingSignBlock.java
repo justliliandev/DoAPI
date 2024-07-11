@@ -11,7 +11,7 @@ public class TerraformHangingSignBlock extends CeilingHangingSignBlock implement
 	private final ResourceLocation guiTexture;
 
 	public TerraformHangingSignBlock(ResourceLocation texture, ResourceLocation guiTexture, Properties settings) {
-		super(BlockSettingsLock.lock(settings), WoodType.OAK);
+		super(WoodType.OAK, BlockSettingsLock.lock(settings));
 		this.texture = texture;
 		this.guiTexture = guiTexture;
 	}
