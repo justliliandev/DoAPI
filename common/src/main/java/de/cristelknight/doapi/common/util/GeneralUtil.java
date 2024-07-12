@@ -98,16 +98,17 @@ public class GeneralUtil {
 		return true;
 	}
 
-	public static NonNullList<Ingredient> deserializeIngredients(JsonArray json) {
-		NonNullList<Ingredient> ingredients = NonNullList.create();
-		for (int i = 0; i < json.size(); i++) {
-			Ingredient ingredient = Ingredient.fromJson(json.get(i));
-			if (!ingredient.isEmpty()) {
-				ingredients.add(ingredient);
-			}
-		}
-		return ingredients;
-	}
+	// TODO
+//	public static NonNullList<Ingredient> deserializeIngredients(JsonArray json) {
+//		NonNullList<Ingredient> ingredients = NonNullList.create();
+//		for (int i = 0; i < json.size(); i++) {
+//			Ingredient ingredient = Ingredient.fromJson(json.get(i));
+//			if (!ingredient.isEmpty()) {
+//				ingredients.add(ingredient);
+//			}
+//		}
+//		return ingredients;
+//	}
 
 	public static VoxelShape rotateShape(Direction from, Direction to, VoxelShape shape) {
 		VoxelShape[] buffer = new VoxelShape[] { shape, Shapes.empty() };
@@ -124,16 +125,17 @@ public class GeneralUtil {
 		return buffer[0];
 	}
 
-    public static void registerColorArmor(Item item, int defaultColor) {
-        ColorHandlerRegistry.registerItemColors((stack, tintIndex) -> 0 < tintIndex ? 0x00FFFFFF : getColor(stack, defaultColor), item);
-    }
+//    public static void registerColorArmor(Item item, int defaultColor) {
+//        ColorHandlerRegistry.registerItemColors((stack, tintIndex) -> 0 < tintIndex ? 0x00FFFFFF : getColor(stack, defaultColor), item);
+//    }
 
-    static int getColor(ItemStack itemStack, int defaultColor) {
-        CompoundTag displayTag = itemStack.getTagElement("display");
-        if (null != displayTag && displayTag.contains("color", Tag.TAG_ANY_NUMERIC))
-            return displayTag.getInt("color");
-        return defaultColor;
-    }
+	// TODO
+//    static int getColor(ItemStack itemStack, int defaultColor) {
+//        CompoundTag displayTag = itemStack.getTagElement("display");
+//        if (null != displayTag && displayTag.contains("color", Tag.TAG_ANY_NUMERIC))
+//            return displayTag.getInt("color");
+//        return defaultColor;
+//    }
 
 	public enum LineConnectingType implements StringRepresentable {
 		NONE("none"),
@@ -225,7 +227,7 @@ public class GeneralUtil {
 	}
 
 	public static RotatedPillarBlock logBlock() {
-		return new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LOG));
+		return new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG));
 	}
 
 	public static boolean isDamageType(DamageSource source, List<ResourceKey<DamageType>> damageTypes){
@@ -347,11 +349,5 @@ public class GeneralUtil {
 		for (int pos = 0; pos < positions.length / 3; pos++)
 			blockSet.add(new BlockPos(positions[pos * 3], positions[pos * 3 + 1], positions[pos * 3 + 2]));
 		return blockSet;
-	}
-
-	public static class FoodComponent extends FoodProperties {
-		public FoodComponent(List<Pair<MobEffectInstance, Float>> statusEffects) {
-			super(1, 0, false, true, false, statusEffects);
-		}
 	}
 }

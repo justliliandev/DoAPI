@@ -19,7 +19,7 @@ public final class TerraformBoatClientHelper {
 
 	private static ResourceLocation getLayerId(ResourceLocation boatId, boolean raft, boolean chest) {
 		String prefix = raft ? (chest ? "chest_raft/" : "raft/") : (chest ? "chest_boat/" : "boat/");
-		return new ResourceLocation(boatId.getNamespace(), prefix + boatId.getPath());
+		return ResourceLocation.fromNamespaceAndPath(boatId.getNamespace(), prefix + boatId.getPath());
 	}
 
 	public static ModelLayerLocation getLayer(ResourceLocation boatId, boolean raft, boolean chest) {

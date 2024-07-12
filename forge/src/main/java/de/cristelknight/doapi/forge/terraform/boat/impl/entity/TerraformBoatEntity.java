@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.Item;
@@ -15,7 +16,7 @@ import net.minecraft.world.level.Level;
 import java.util.Optional;
 
 public class TerraformBoatEntity extends Boat implements TerraformBoatHolder {
-	private static final EntityDataAccessor<Optional<TerraformBoatType>> TERRAFORM_BOAT = SynchedEntityData.defineId(TerraformBoatEntity.class, TerraformBoatTrackedData.HANDLER);
+	private static final EntityDataAccessor<Optional<TerraformBoatType>> TERRAFORM_BOAT = SynchedEntityData.defineId(TerraformBoatEntity.class, TerraformBoatTrackedData.ENTITY_DATA_BOAT);
 
 	public TerraformBoatEntity(EntityType<? extends TerraformBoatEntity> type, Level world) {
 		super(type, world);
@@ -78,9 +79,9 @@ public class TerraformBoatEntity extends Boat implements TerraformBoatHolder {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(TERRAFORM_BOAT, Optional.empty());
+	protected void defineSynchedData(SynchedEntityData.Builder arg) {
+		arg.define(TERRAFORM_BOAT, Optional.empty());
+		super.defineSynchedData(arg);
 	}
 
 	// Serialization

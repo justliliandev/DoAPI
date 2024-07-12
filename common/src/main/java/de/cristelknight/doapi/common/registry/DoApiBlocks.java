@@ -29,7 +29,7 @@ public class DoApiBlocks {
     }
 
     public static <T extends Block> RegistrySupplier<T> registerWithoutItem(String path, Supplier<T> block) {
-        return Util.registerWithoutItem(BLOCKS, BLOCK_REGISTRAR, new DoApiRL(path), block);
+        return Util.registerWithoutItem(BLOCKS, BLOCK_REGISTRAR, DoApiRL.asResourceLocation(path), block);
     }
 
     public static BlockBehaviour.Properties properties(float strength) {

@@ -11,8 +11,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.StateSwitchingButton;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
@@ -25,7 +25,7 @@ public class PrivateRecipeBookRecipeArea {
     private PrivateAnimatedResultButton hoveredResultButton;
     private final PrivateRecipeAlternativesWidget alternatesWidget = new PrivateRecipeAlternativesWidget();
     private Minecraft client;
-    private List<? extends Recipe<Container>> resultCollections = ImmutableList.of();
+    private List<? extends Recipe<SingleRecipeInput>> resultCollections = ImmutableList.of();
     private StateSwitchingButton nextPageButton;
     private StateSwitchingButton prevPageButton;
     private int pageCount;
@@ -49,12 +49,12 @@ public class PrivateRecipeBookRecipeArea {
         }
 
         this.nextPageButton = new StateSwitchingButton(parentLeft + 93, parentTop + 137, 12, 17, false);
-        this.nextPageButton.initTextureValues(1, 208, 13, 18, PrivateRecipeBookWidget.TEXTURE);
+        this.nextPageButton.initTextureValues(PrivateRecipeBookWidget.TEXTURES);
         this.prevPageButton = new StateSwitchingButton(parentLeft + 38, parentTop + 137, 12, 17, true);
-        this.prevPageButton.initTextureValues(1, 208, 13, 18, PrivateRecipeBookWidget.TEXTURE);
+        this.prevPageButton.initTextureValues(PrivateRecipeBookWidget.TEXTURES);
     }
 
-    public void setResults(List<? extends Recipe<Container>> resultCollections, boolean resetCurrentPage) {
+    public void setResults(List<? extends Recipe<SingleRecipeInput>> resultCollections, boolean resetCurrentPage) {
         this.resultCollections = resultCollections;
         this.pageCount = (int) Math.ceil((double) resultCollections.size() / 20.0);
         if (this.pageCount <= this.currentPage || resetCurrentPage) {

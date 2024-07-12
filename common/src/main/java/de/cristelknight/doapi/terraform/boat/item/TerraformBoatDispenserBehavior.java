@@ -2,8 +2,8 @@ package de.cristelknight.doapi.terraform.boat.item;
 
 import de.cristelknight.doapi.DoApiCommonEP;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.resources.ResourceLocation;
@@ -29,14 +29,14 @@ public class TerraformBoatDispenserBehavior extends DefaultDispenseItemBehavior 
 
 	@Override
 	public @NotNull ItemStack execute(BlockSource pointer, ItemStack stack) {
-		Direction facing = pointer.getBlockState().getValue(DispenserBlock.FACING);
+		Direction facing = pointer.state().getValue(DispenserBlock.FACING);
 
-		double x = pointer.x() + facing.getStepX() * OFFSET_MULTIPLIER;
-		double y = pointer.y() + facing.getStepY() * OFFSET_MULTIPLIER;
-		double z = pointer.z() + facing.getStepZ() * OFFSET_MULTIPLIER;
+		double x = pointer.pos().getX() + facing.getStepX() * OFFSET_MULTIPLIER;
+		double y = pointer.pos().getY() + facing.getStepY() * OFFSET_MULTIPLIER;
+		double z = pointer.pos().getZ() + facing.getStepZ() * OFFSET_MULTIPLIER;
 
-		Level world = pointer.getLevel();
-		BlockPos pos = pointer.getPos().relative(facing);
+		Level world = pointer.level();
+		BlockPos pos = pointer.pos().relative(facing);
 
 		if (world.getFluidState(pos).is(FluidTags.WATER)) {
 			y += 1;

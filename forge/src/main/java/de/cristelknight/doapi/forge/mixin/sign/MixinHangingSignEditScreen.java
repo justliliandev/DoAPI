@@ -23,7 +23,7 @@ public class MixinHangingSignEditScreen {
 	private void initSignTextureId(SignBlockEntity signBlockEntity, boolean front, boolean filtered, CallbackInfo ci) {
 		if (signBlockEntity.getBlockState().getBlock() instanceof TerraformHangingSign signBlock) {
 			ResourceLocation guiTexture = signBlock.getGuiTexture();
-			this.texture = new ResourceLocation(guiTexture.getNamespace(), guiTexture.getPath() + ".png");
+			this.texture = ResourceLocation.fromNamespaceAndPath(guiTexture.getNamespace(), guiTexture.getPath() + ".png");
 		}
 	}
 }

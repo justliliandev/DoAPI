@@ -6,6 +6,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
@@ -21,9 +22,11 @@ public class LinkEntry extends AbstractConfigListEntry<Void> {
     private static final int HEIGHT = 40;
     private Button button = null;
 
-    public LinkEntry(Component fieldName, Button.OnPress onPress, ResourceLocation texture, int offset) {
+    public LinkEntry(Component fieldName, Button.OnPress onPress, WidgetSprites texture, int offset) {
         super(fieldName, false);
-        button = new ImageButton(0, 0, 200, HEIGHT, 0, 0, offset, texture,200, 40, onPress);
+        // TODO: CHECK
+        // button = new ImageButton(0, 0, 200, HEIGHT, 0, 0, offset, texture,200, 40, onPress);
+        button = new ImageButton(0, 0, 200, HEIGHT, texture, onPress);
     }
 
 

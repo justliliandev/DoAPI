@@ -1,6 +1,7 @@
 package de.cristelknight.doapi.common.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
@@ -12,12 +13,14 @@ import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class SmallBoneMealableFlowerBlock extends FlowerBlock implements BonemealableBlock {
-    public SmallBoneMealableFlowerBlock(MobEffect mobEffect, int i, Properties properties) {
-        super(mobEffect, i, properties);
+
+
+    public SmallBoneMealableFlowerBlock(Holder<MobEffect> holder, float f, Properties properties) {
+        super(holder, f, properties);
     }
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState, boolean bl) {
+    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return true;
     }
 

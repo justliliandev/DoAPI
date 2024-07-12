@@ -3,8 +3,8 @@ package de.cristelknight.doapi.forge.terraform.boat.impl;
 import de.cristelknight.doapi.forge.terraform.boat.api.TerraformBoatTypeRegistry;
 import de.cristelknight.doapi.terraform.boat.TerraformBoatType;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.network.syncher.EntityDataSerializers;
 
 import java.util.Optional;
 
@@ -12,17 +12,22 @@ public final class TerraformBoatTrackedData {
 	private TerraformBoatTrackedData() {
 	}
 
-	public static final EntityDataSerializer<Optional<TerraformBoatType>> HANDLER = EntityDataSerializer.optional(TerraformBoatTrackedData::write, TerraformBoatTrackedData::read);
+	static StreamCodec<FriendlyByteBuf, Optional<TerraformBoatType>> TERRAFORM_BOAT = new StreamCodec<FriendlyByteBuf, Optional<TerraformBoatType>>() {
+		@Override
+		public void encode(FriendlyByteBuf byteBuf, Optional<TerraformBoatType> boat) {
+			byteBuf.writeResourceLocation(TerraformBoatTypeRegistry.getId(boat.get()));
+		}
 
-	private static void write(FriendlyByteBuf buf, TerraformBoatType boat) {
-		buf.writeResourceLocation(TerraformBoatTypeRegistry.getId(boat));
-	}
+		@Override
+		public Optional<TerraformBoatType> decode(FriendlyByteBuf object) {
+			return Optional.of(TerraformBoatTypeRegistry.get(object.readResourceLocation()));
+		}
+	};
 
-	private static TerraformBoatType read(FriendlyByteBuf buf) {
-		return TerraformBoatTypeRegistry.get(buf.readResourceLocation());
-	}
+	public static final EntityDataSerializer<Optional<TerraformBoatType>> ENTITY_DATA_BOAT = EntityDataSerializer.forValueType(TERRAFORM_BOAT);
 
 	public static void register() {
-		EntityDataSerializers.registerSerializer(HANDLER);
+		//NeoForgeRegistries.ENTITY_DATA_SERIALIZERS.
+		//EntityDataSerializers.registerSerializer(ENTITY_DATA_BOAT);
 	}
 }

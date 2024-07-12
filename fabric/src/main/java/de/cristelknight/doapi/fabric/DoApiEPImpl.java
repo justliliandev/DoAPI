@@ -18,7 +18,9 @@ public class DoApiEPImpl {
     @SuppressWarnings("unchecked")
     public static <T extends Recipe<?>> T fromJson(ResourceLocation recipeId, JsonObject json) {
         if(!recipeId.getNamespace().equals("conditional")) throw new UnsupportedOperationException("[DoAPI] All vinery fabric conditional recipes should be under the conditional namespace! " + recipeId + "isn't!");
-        return (T) RecipeManager.fromJson(recipeId, GsonHelper.getAsJsonObject(json, "recipe"));
+        // TODO
+        //return (T) RecipeManager.fromJson(recipeId, GsonHelper.getAsJsonObject(json, "recipe"));
+        return null;
     }
 
     public static boolean isModLoaded(String modId) {

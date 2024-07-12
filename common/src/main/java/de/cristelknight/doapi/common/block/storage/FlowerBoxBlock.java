@@ -58,13 +58,13 @@ public class FlowerBoxBlock extends StorageBlock {
 	}
 
 	@Override
-	public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
 		if (player.isShiftKeyDown())
 			return InteractionResult.PASS;
 
-		return super.use(state, world, pos, player, hand, hit);
-	}
+		return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
 
+	}
 
 	@Override
 	public int size() {

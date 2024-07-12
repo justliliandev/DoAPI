@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class StandardBlockEntityRenderer implements BlockEntityRenderer<StandardBlockEntity>
 {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(DoApi.MOD_ID, "standard"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(DoApi.MOD_ID, "standard"), "main");
 
     public static final String FLAG = "flag";
     private static final String POLE = "pole";

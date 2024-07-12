@@ -16,12 +16,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import org.joml.Matrix4fStack;
 
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class PrivateAnimatedResultButton extends AbstractWidget {
-    private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("textures/gui/recipe_book.png");
+    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/recipe_book.png");
     private AbstractPrivateRecipeScreenHandler craftingScreenHandler;
     private Recipe<?> recipe;
     private float bounce;
@@ -57,13 +58,13 @@ public class PrivateAnimatedResultButton extends AbstractWidget {
         int j = 206;
 
         boolean bl = this.bounce > 0.0F;
-        PoseStack poseStack = RenderSystem.getModelViewStack();
+        Matrix4fStack poseStack = RenderSystem.getModelViewStack();
         if (bl) {
             float f = 1.0F + 0.1F * (float) Math.sin((this.bounce / 15.0F * 3.1415927F));
-            poseStack.pushPose();
-            poseStack.translate((this.getX() + 8), (this.getY() + 12), 0.0);
+            poseStack.pushMatrix();
+            poseStack.translate((this.getX() + 8), (this.getY() + 12), 0.0F);
             poseStack.scale(f, f, 1.0F);
-            poseStack.translate((-(this.getX() + 8)), (-(this.getY() + 12)), 0.0);
+            poseStack.translate((-(this.getX() + 8)), (-(this.getY() + 12)), 0.0F);
             RenderSystem.applyModelViewMatrix();
             this.bounce -= delta;
         }
@@ -74,7 +75,7 @@ public class PrivateAnimatedResultButton extends AbstractWidget {
 
         guiGraphics.renderItem(recipe.getResultItem(minecraftClient.level.registryAccess()), this.getX() + k, this.getY() + k);
         if (bl) {
-            poseStack.popPose();
+            poseStack.popMatrix();
             RenderSystem.applyModelViewMatrix();
         }
 

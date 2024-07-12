@@ -16,6 +16,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.StateSwitchingButton;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.recipebook.RecipeShownListener;
 import net.minecraft.core.RegistryAccess;
@@ -23,14 +24,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.recipebook.PlaceRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
@@ -40,7 +38,12 @@ import java.util.Objects;
 
 @Environment(EnvType.CLIENT)
 public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>, Renderable, GuiEventListener, RecipeShownListener {
-    public static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/recipe_book.png");
+    public static final WidgetSprites TEXTURES = new WidgetSprites(ResourceLocation.withDefaultNamespace("textures/gui/sprites/crafting_overlay.png"),
+            ResourceLocation.withDefaultNamespace("textures/gui/sprites/crafting_overlay_disabled.png"),
+            ResourceLocation.withDefaultNamespace("textures/gui/sprites/crafting_overlay_highlighted.png"),
+            ResourceLocation.withDefaultNamespace("textures/gui/sprites/crafting_overlay_highlighted_disabled.png"));
+    @Deprecated
+    public static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/recipe_book.png");
     private static final Component SEARCH_HINT_TEXT;
     private static final Component TOGGLE_CRAFTABLE_RECIPES_TEXT;
     private static final Component TOGGLE_ALL_RECIPES_TEXT;
@@ -69,7 +72,7 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
         super();
     }
 
-    protected abstract RecipeType<? extends Recipe<Container>> getRecipeType();
+    protected abstract RecipeType<? extends Recipe<SingleRecipeInput>> getRecipeType();
 
     public abstract void insertRecipe(Recipe<?> recipe);
 
@@ -190,7 +193,8 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
                 this.refreshInputs();
                 this.cachedInvChangeCount = this.client.player.getInventory().getTimesChanged();
             }
-            this.searchField.tick();
+            // TODO: This is suppose to some framerate counting, but I'm not sure how to replace it
+            //this.searchField.tick();
         }
     }
 
@@ -199,7 +203,7 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
         if (this.currentTab == null) return;
         if (this.searchField == null) return;
 
-        List<? extends Recipe<Container>> recipes = getResultsForGroup(currentTab.getGroup(), client.level.getRecipeManager().getAllRecipesFor(getRecipeType()));
+        List<? extends Recipe<SingleRecipeInput>> recipes = getResultsForGroup(currentTab.getGroup(), client.level.getRecipeManager().getAllRecipesFor(getRecipeType()));
 
         String string = this.searchField.getValue();
 
@@ -214,9 +218,10 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
         this.recipesArea.setResults(recipes, resetCurrentPage);
     }
 
-    private <T extends Recipe<Container>> List<T> getResultsForGroup(IRecipeBookGroup group, List<T> recipes) {
-        List<T> results = Lists.newArrayList();
-        for (T recipe : recipes) {
+    private List<? extends Recipe<SingleRecipeInput>> getResultsForGroup(IRecipeBookGroup group, List<? extends RecipeHolder<? extends Recipe<SingleRecipeInput>>> allRecipesFor) {
+        List<Recipe<SingleRecipeInput>> results = Lists.newArrayList();
+        for(RecipeHolder<? extends Recipe<SingleRecipeInput>> recipeHolder : allRecipesFor) {
+            Recipe<SingleRecipeInput> recipe = recipeHolder.value();
             if (group.fitRecipe(recipe, client.level.registryAccess())) {
                 results.add(recipe);
             }
@@ -448,7 +453,7 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
     }
 
     protected void setCraftableButtonTexture() {
-        this.toggleCraftableButton.initTextureValues(152, 41, 28, 18, TEXTURE);
+        this.toggleCraftableButton.initTextureValues(TEXTURES);
     }
 
     protected Component getToggleCraftableButtonText() {
@@ -475,11 +480,13 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
     }
 
     @Override
-    public void addItemToSlot(Iterator<Ingredient> inputs, int slot, int amount, int gridX, int gridY) {
+    public void addItemToSlot(Ingredient object, int i, int j, int k, int l) {
+
     }
 
     @Override
-    public void recipesShown(List<Recipe<?>> recipes) {
+    public void recipesShown(List<RecipeHolder<?>> list) {
+
     }
 
     static {

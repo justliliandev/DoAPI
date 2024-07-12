@@ -2,21 +2,17 @@ package de.cristelknight.doapi.forge;
 
 import de.cristelknight.doapi.DoApi;
 import de.cristelknight.doapi.forge.common.packs.RepositorySourceMaker;
-import dev.architectury.platform.forge.EventBuses;
 import net.minecraft.server.packs.PackType;
-import net.minecraftforge.event.AddPackFindersEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 
 @Mod(DoApi.MOD_ID)
 public class DoApiForge {
 
-    public DoApiForge() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        EventBuses.registerModEventBus(DoApi.MOD_ID, modEventBus);
+    public DoApiForge(IEventBus modBus) {
         DoApi.init();
-        modEventBus.addListener(this::injectPackRepositories);
+        modBus.addListener(this::injectPackRepositories);
     }
 
     private void injectPackRepositories(AddPackFindersEvent event) {

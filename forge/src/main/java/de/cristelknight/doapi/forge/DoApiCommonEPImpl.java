@@ -58,19 +58,19 @@ public class DoApiCommonEPImpl {
     }
 
     public static Block getSign(ResourceLocation signTextureId) {
-        return new TerraformSignBlock(signTextureId, BlockBehaviour.Properties.copy(Blocks.OAK_SIGN));
+        return new TerraformSignBlock(signTextureId, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SIGN));
     }
 
     public static Block getWallSign(ResourceLocation signTextureId) {
-        return new TerraformWallSignBlock(signTextureId, BlockBehaviour.Properties.copy(Blocks.OAK_SIGN));
+        return new TerraformWallSignBlock(signTextureId, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SIGN));
     }
 
     public static Block getHangingSign(ResourceLocation hangingSignTextureId, ResourceLocation hangingSignGuiTextureId) {
-        return new TerraformHangingSignBlock(hangingSignTextureId, hangingSignGuiTextureId, BlockBehaviour.Properties.copy(Blocks.OAK_HANGING_SIGN));
+        return new TerraformHangingSignBlock(hangingSignTextureId, hangingSignGuiTextureId, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_HANGING_SIGN));
     }
 
     public static Block getWallHangingSign(ResourceLocation hangingSignTextureId, ResourceLocation hangingSignGuiTextureId) {
-        return new TerraformWallHangingSignBlock(hangingSignTextureId, hangingSignGuiTextureId, BlockBehaviour.Properties.copy(Blocks.OAK_HANGING_SIGN));
+        return new TerraformWallHangingSignBlock(hangingSignTextureId, hangingSignGuiTextureId, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_HANGING_SIGN));
     }
 
 }

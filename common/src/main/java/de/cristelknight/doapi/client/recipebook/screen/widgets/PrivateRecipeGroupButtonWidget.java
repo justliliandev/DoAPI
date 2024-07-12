@@ -20,7 +20,7 @@ public class PrivateRecipeGroupButtonWidget extends StateSwitchingButton {
     public PrivateRecipeGroupButtonWidget(IRecipeBookGroup group) {
         super(0, 0, 35, 27, false);
         this.group = group;
-        this.initTextureValues(153, 2, 35, 0, PrivateRecipeBookWidget.TEXTURE);
+        this.initTextureValues(PrivateRecipeBookWidget.TEXTURES);
     }
 
     @Override
@@ -35,17 +35,18 @@ public class PrivateRecipeGroupButtonWidget extends StateSwitchingButton {
         }
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, this.resourceLocation);
+        RenderSystem.setShaderTexture(0, this.sprites.get(true, this.isStateTriggered));
         RenderSystem.disableDepthTest();
-        int i = this.xTexStart;
-        int j = this.yTexStart;
-        if (this.isStateTriggered) {
-            i += this.xDiffTex;
-        }
-
-        if (this.isHovered()) {
-            j += this.yDiffTex;
-        }
+        int i = this.getX();
+        int j = this.getY();
+        //TODO ???
+//        if (this.isStateTriggered) {
+//            i += this.xDiffTex;
+//        }
+//
+//        if (this.isHovered()) {
+//            j += this.yDiffTex;
+//        }
 
         int k = this.getX();
         if (this.isStateTriggered) {
@@ -53,7 +54,7 @@ public class PrivateRecipeGroupButtonWidget extends StateSwitchingButton {
         }
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        guiGraphics.blit(this.resourceLocation, k, this.getY(), i, j, this.width, this.height);
+        guiGraphics.blit(this.sprites.get(true, this.isStateTriggered), k, this.getY(), i, j, this.width, this.height);
         RenderSystem.enableDepthTest();
         this.renderIcons(guiGraphics);
         if (this.bounce > 0.0F) {

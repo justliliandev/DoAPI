@@ -3,6 +3,7 @@ package de.cristelknight.doapi.common.block.entity;
 import de.cristelknight.doapi.common.registry.DoApiBlockEntityTypes;
 import de.cristelknight.doapi.common.util.GeneralUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -30,16 +31,18 @@ public class FlowerBoxBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag nbt) {
-		ContainerHelper.saveAllItems(nbt, this.flowers);
-		super.saveAdditional(nbt);
+	protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+		ContainerHelper.saveAllItems(compoundTag, this.flowers, provider);
+		super.saveAdditional(compoundTag, provider);
+
 	}
 
 	@Override
-	public void load(CompoundTag nbt) {
-		super.load(nbt);
+	protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+		super.loadAdditional(compoundTag, provider);
 		this.flowers = NonNullList.withSize(3, ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(nbt, this.flowers);
+		ContainerHelper.loadAllItems(compoundTag, this.flowers, provider);
+
 	}
 
 	public void addFlower(ItemStack stack, int slot){
@@ -77,8 +80,8 @@ public class FlowerBoxBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public @NotNull CompoundTag getUpdateTag() {
-		return this.saveWithoutMetadata();
+	public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+		return this.saveWithoutMetadata(provider);
 	}
 
 	@Override

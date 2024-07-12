@@ -17,7 +17,7 @@ public class DoApiEntityTypes {
     private static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(DoApi.MOD_ID, Registries.ENTITY_TYPE);
 
 
-    public static final RegistrySupplier<EntityType<ChairEntity>> CHAIR = create("chair", () -> EntityType.Builder.of(ChairEntity::new, MobCategory.MISC).sized(0.001F, 0.001F).build(new DoApiRL("chair").toString()));
+    public static final RegistrySupplier<EntityType<ChairEntity>> CHAIR = create("chair", () -> EntityType.Builder.of(ChairEntity::new, MobCategory.MISC).sized(0.001F, 0.001F).build(DoApiRL.asResourceLocation("chair").toString()));
 
 
 

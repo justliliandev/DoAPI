@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import java.util.Optional;
 
 public class TerraformChestBoatEntity extends ChestBoat implements TerraformBoatHolder {
-	private static final EntityDataAccessor<Optional<TerraformBoatType>> TERRAFORM_BOAT = SynchedEntityData.defineId(TerraformChestBoatEntity.class, TerraformBoatTrackedData.HANDLER);
+	private static final EntityDataAccessor<Optional<TerraformBoatType>> TERRAFORM_BOAT = SynchedEntityData.defineId(TerraformChestBoatEntity.class, TerraformBoatTrackedData.ENTITY_DATA_BOAT);
 
 	public TerraformChestBoatEntity(EntityType<? extends TerraformChestBoatEntity> type, Level world) {
 		super(type, world);
@@ -78,9 +78,9 @@ public class TerraformChestBoatEntity extends ChestBoat implements TerraformBoat
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		this.entityData.define(TERRAFORM_BOAT, Optional.empty());
+	protected void defineSynchedData(SynchedEntityData.Builder arg) {
+		arg.define(TERRAFORM_BOAT, Optional.empty());
+		super.defineSynchedData(arg);
 	}
 
 	// Serialization

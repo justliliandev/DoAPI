@@ -16,11 +16,12 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
@@ -64,8 +65,8 @@ public class CustomArmorFeatureRenderer<T extends LivingEntity, M extends Humano
 		poseStack.translate(0, customArmor.getYOffset(), 0);
 
 
-		if (armorItem instanceof DyeableArmorItem dyeableArmorItem) {
-			int c = dyeableArmorItem.getColor(itemStack);
+		if (itemStack.is(ItemTags.DYEABLE)) {
+			int c = itemStack.get(DataComponents.DYED_COLOR).rgb();
 			float r = (float) (c >> 16 & 0xFF) / 255.0f;
 			float g = (float) (c >> 8 & 0xFF) / 255.0f;
 			float b = (float) (c & 0xFF) / 255.0f;
@@ -78,8 +79,14 @@ public class CustomArmorFeatureRenderer<T extends LivingEntity, M extends Humano
 	}
 
 	private void renderModel(PoseStack poseStack, MultiBufferSource multiBufferSource, int light, boolean foil, EntityModel<T> model, float f, float g, float h, ResourceLocation resourceLocation) {
-		VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(multiBufferSource, RenderType.armorCutoutNoCull(resourceLocation), false, foil);
-		model.renderToBuffer(poseStack, vertexConsumer, light, OverlayTexture.NO_OVERLAY, f, g, h, 1.0f);
+		VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(multiBufferSource, RenderType.armorCutoutNoCull(resourceLocation), foil);
+		int rInt = (int)(f * 255);
+		int gInt = (int)(g * 255);
+		int bInt = (int)(h * 255);
+
+		int argbColor = (255 << 24) | (rInt << 16) | (gInt << 8) | bInt;
+
+		model.renderToBuffer(poseStack, vertexConsumer, light, OverlayTexture.NO_OVERLAY, argbColor);
 	}
 
 	private void setPartVisibility(HumanoidModel<T> humanoidModel, EquipmentSlot equipmentSlot) {

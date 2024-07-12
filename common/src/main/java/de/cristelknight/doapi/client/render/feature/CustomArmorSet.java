@@ -23,7 +23,7 @@ public class CustomArmorSet<T extends LivingEntity> {
     public CustomArmorSet<T> setTexture(ResourceLocation texture) {
         String path = texture.getPath();
         if (!path.contains("/") || !path.contains("."))
-            this.texture = new ResourceLocation(texture.getNamespace(), "textures/models/armor/" + path + ".png");
+            this.texture =  ResourceLocation.tryBuild(texture.getNamespace(), "textures/models/armor/" + path + ".png");
         else
             this.texture = texture;
         return this;
@@ -57,7 +57,7 @@ public class CustomArmorSet<T extends LivingEntity> {
                 String extension = path.substring(dotIndex);
 
                 String newPath = basePath + "_" + string + extension;
-                return new ResourceLocation(newPath);
+                return ResourceLocation.tryParse(newPath);
             }
         }
         return this.texture;

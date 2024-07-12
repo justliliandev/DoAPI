@@ -103,6 +103,6 @@ public class ChairUtil {
 
     private static ResourceLocation getDimensionTypeId(Level world)
     {
-        return world.dimensionTypeId().location();
+        return world.dimension().location();
     }
 }

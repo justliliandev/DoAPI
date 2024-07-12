@@ -16,10 +16,11 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -78,15 +79,12 @@ public class CustomHatFeatureRenderer<T extends LivingEntity, M extends EntityMo
 				matrices.pushPose();
                 this.setupHat(matrices, slot, hatItem.getOffset());
 
-				VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(vertexConsumers, RenderType.armorCutoutNoCull(this.getTexture(entity, slot)), false, hatStack.hasFoil());
-				if (hatItem instanceof DyeableArmorItem dyeableArmorItem) {
-					int j = dyeableArmorItem.getColor(hatStack);
-					float f = (float) (j >> 16 & 0xFF) / 255.0f;
-					float g = (float) (j >> 8 & 0xFF) / 255.0f;
-					float h = (float) (j & 0xFF) / 255.0f;
-					headModel.renderToBuffer(matrices, vertexConsumer, light, OverlayTexture.NO_OVERLAY, f, g, h, 1F);
+				VertexConsumer vertexConsumer = ItemRenderer.getArmorFoilBuffer(vertexConsumers, RenderType.armorCutoutNoCull(this.getTexture(entity, slot)), hatStack.hasFoil());
+				if (hatStack.is(ItemTags.DYEABLE)) {
+					int color = hatStack.get(DataComponents.DYED_COLOR).rgb();
+					headModel.renderToBuffer(matrices, vertexConsumer, light, OverlayTexture.NO_OVERLAY, color);
 				} else {
-					headModel.renderToBuffer(matrices, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+					headModel.renderToBuffer(matrices, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
 				}
 				matrices.popPose();
 			}
