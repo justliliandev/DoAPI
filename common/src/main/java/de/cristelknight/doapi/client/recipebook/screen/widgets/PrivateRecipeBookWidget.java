@@ -38,11 +38,11 @@ import java.util.Objects;
 
 @Environment(EnvType.CLIENT)
 public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>, Renderable, GuiEventListener, RecipeShownListener {
-    public static final WidgetSprites TEXTURES = new WidgetSprites(ResourceLocation.withDefaultNamespace("textures/gui/sprites/crafting_overlay.png"),
-            ResourceLocation.withDefaultNamespace("textures/gui/sprites/crafting_overlay_disabled.png"),
-            ResourceLocation.withDefaultNamespace("textures/gui/sprites/crafting_overlay_highlighted.png"),
-            ResourceLocation.withDefaultNamespace("textures/gui/sprites/crafting_overlay_highlighted_disabled.png"));
-    @Deprecated
+    private static final WidgetSprites FILTER_BUTTON_SPRITES = new WidgetSprites(
+            ResourceLocation.withDefaultNamespace("recipe_book/filter_enabled"),
+            ResourceLocation.withDefaultNamespace("recipe_book/filter_disabled"),
+            ResourceLocation.withDefaultNamespace("recipe_book/filter_enabled_highlighted"),
+            ResourceLocation.withDefaultNamespace("recipe_book/filter_disabled_highlighted"));
     public static final ResourceLocation TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/recipe_book.png");
     private static final Component SEARCH_HINT_TEXT;
     private static final Component TOGGLE_CRAFTABLE_RECIPES_TEXT;
@@ -72,7 +72,7 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
         super();
     }
 
-    protected abstract RecipeType<? extends Recipe<SingleRecipeInput>> getRecipeType();
+    protected abstract RecipeType<? extends Recipe<RecipeInput>> getRecipeType();
 
     public abstract void insertRecipe(Recipe<?> recipe);
 
@@ -141,7 +141,8 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
             for (PrivateRecipeGroupButtonWidget recipeGroupButtonWidget : this.tabButtons) {
                 recipeGroupButtonWidget.render(guiGraphics, mouseX, mouseY, delta);
             }
-
+            this.toggleCraftableButton = new StateSwitchingButton(i + 110, j + 12, 26, 16, RBConfig.DEFAULT.getConfig().craftableToggle());
+            setCraftableButtonTexture();
             this.toggleCraftableButton.render(guiGraphics, mouseX, mouseY, delta);
             this.recipesArea.draw(guiGraphics, i, j, mouseX, mouseY, delta);
             poseStack.popPose();
@@ -188,12 +189,10 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
             this.setOpen(open);
         }
         if (this.isOpen()) {
-            assert this.client.player != null;
             if (this.cachedInvChangeCount != this.client.player.getInventory().getTimesChanged()) {
                 this.refreshInputs();
                 this.cachedInvChangeCount = this.client.player.getInventory().getTimesChanged();
             }
-            // TODO: This is suppose to some framerate counting, but I'm not sure how to replace it
             //this.searchField.tick();
         }
     }
@@ -202,8 +201,7 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
     private void refreshResults(boolean resetCurrentPage) {
         if (this.currentTab == null) return;
         if (this.searchField == null) return;
-
-        List<? extends Recipe<SingleRecipeInput>> recipes = getResultsForGroup(currentTab.getGroup(), client.level.getRecipeManager().getAllRecipesFor(getRecipeType()));
+        List<? extends Recipe<RecipeInput>> recipes = getResultsForGroup(currentTab.getGroup(), client.level.getRecipeManager().getAllRecipesFor(getRecipeType()));
 
         String string = this.searchField.getValue();
 
@@ -218,12 +216,11 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
         this.recipesArea.setResults(recipes, resetCurrentPage);
     }
 
-    private List<? extends Recipe<SingleRecipeInput>> getResultsForGroup(IRecipeBookGroup group, List<? extends RecipeHolder<? extends Recipe<SingleRecipeInput>>> allRecipesFor) {
-        List<Recipe<SingleRecipeInput>> results = Lists.newArrayList();
-        for(RecipeHolder<? extends Recipe<SingleRecipeInput>> recipeHolder : allRecipesFor) {
-            Recipe<SingleRecipeInput> recipe = recipeHolder.value();
-            if (group.fitRecipe(recipe, client.level.registryAccess())) {
-                results.add(recipe);
+    private  <C extends RecipeInput, T extends Recipe<C>> List<T> getResultsForGroup(IRecipeBookGroup group, List<RecipeHolder<T>> recipes) {
+        List<T> results = Lists.newArrayList();
+        for (RecipeHolder<T> recipe : recipes) {
+            if (group.fitRecipe(recipe.value(), client.level.registryAccess())) {
+                results.add(recipe.value());
             }
         }
         return results;
@@ -243,7 +240,6 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
 
     private void refreshInputs() {
         this.recipeFinder.clear();
-        assert this.client.player != null;
         this.client.player.getInventory().fillStackedContents(this.recipeFinder);
         this.refreshResults(false);
     }
@@ -253,7 +249,6 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
         int i = (this.parentWidth - 147) / 2 - this.leftOffset;
         int j = (this.parentHeight - 166) / 2;
         this.recipeFinder.clear();
-        assert this.client.player != null;
         this.client.player.getInventory().fillStackedContents(this.recipeFinder);
         String string = this.searchField != null ? this.searchField.getValue() : "";
         Font var10003 = this.client.font;
@@ -268,7 +263,6 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
         this.searchField.setValue(string);
         this.recipesArea.initialize(this.client, i, j, this.screenHandler);
         this.toggleCraftableButton = new StateSwitchingButton(i + 110, j + 12, 26, 16, RBConfig.DEFAULT.getConfig().craftableToggle());
-        this.setCraftableButtonTexture();
         this.tabButtons.clear();
 
         for (IRecipeBookGroup recipeBookGroup : screenHandler.getGroups()) {
@@ -286,6 +280,7 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
 
         this.currentTab.setStateTriggered(true);
         this.refreshResults(false);
+        this.setCraftableButtonTexture();
         this.refreshTabButtons();
     }
 
@@ -363,24 +358,21 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         this.searching = false;
-        if (this.isOpen() && !Objects.requireNonNull(this.client.player).isSpectator()) {
+        if (this.isOpen() && !this.client.player.isSpectator()) {
             if (keyCode == 256 && !this.isWide()) {
                 this.setOpen(false);
                 return true;
+            } else if (this.searchField.keyPressed(keyCode, scanCode, modifiers)) {
+                this.refreshSearchResults();
+                return true;
+            } else if (this.searchField.isFocused() && this.searchField.isVisible() && keyCode != 256) {
+                return true;
+            } else if (this.client.options.keyChat.matches(keyCode, scanCode) && !this.searchField.isFocused()) {
+                this.searching = true;
+                this.searchField.setFocused(true);
+                return true;
             } else {
-                assert this.searchField != null;
-                if (this.searchField.keyPressed(keyCode, scanCode, modifiers)) {
-                    this.refreshSearchResults();
-                    return true;
-                } else if (this.searchField.isFocused() && this.searchField.isVisible() && keyCode != 256) {
-                    return true;
-                } else if (this.client.options.keyChat.matches(keyCode, scanCode) && !this.searchField.isFocused()) {
-                    this.searching = true;
-                    this.searchField.setFocused(true);
-                    return true;
-                } else {
-                    return false;
-                }
+                return false;
             }
         } else {
             return false;
@@ -453,8 +445,9 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
     }
 
     protected void setCraftableButtonTexture() {
-        this.toggleCraftableButton.initTextureValues(TEXTURES);
+        this.toggleCraftableButton.initTextureValues(FILTER_BUTTON_SPRITES);
     }
+
 
     protected Component getToggleCraftableButtonText() {
         return TOGGLE_CRAFTABLE_RECIPES_TEXT;
@@ -481,11 +474,6 @@ public abstract class PrivateRecipeBookWidget implements PlaceRecipe<Ingredient>
 
     @Override
     public void addItemToSlot(Ingredient object, int i, int j, int k, int l) {
-
-    }
-
-    @Override
-    public void recipesShown(List<RecipeHolder<?>> list) {
 
     }
 

@@ -1,15 +1,11 @@
 package de.cristelknight.doapi.common.util;
 
-import com.google.gson.JsonArray;
-import com.mojang.datafixers.util.Pair;
-import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import io.netty.buffer.Unpooled;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -19,23 +15,20 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -47,8 +40,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -75,7 +66,7 @@ public class GeneralUtil {
 		return levelReader.getBlockState(blockPos.below()).isSolid();
 	}
 
-	public static boolean matchesRecipe(Container inventory, NonNullList<Ingredient> recipe, int startIndex, int endIndex) {
+	public static boolean matchesRecipe(RecipeInput inventory, NonNullList<Ingredient> recipe, int startIndex, int endIndex) {
 		final List<ItemStack> validStacks = new ArrayList<>();
 		for (int i = startIndex; i <= endIndex; i++) {
 			final ItemStack stackInSlot = inventory.getItem(i);
@@ -98,18 +89,6 @@ public class GeneralUtil {
 		return true;
 	}
 
-	// TODO
-//	public static NonNullList<Ingredient> deserializeIngredients(JsonArray json) {
-//		NonNullList<Ingredient> ingredients = NonNullList.create();
-//		for (int i = 0; i < json.size(); i++) {
-//			Ingredient ingredient = Ingredient.fromJson(json.get(i));
-//			if (!ingredient.isEmpty()) {
-//				ingredients.add(ingredient);
-//			}
-//		}
-//		return ingredients;
-//	}
-
 	public static VoxelShape rotateShape(Direction from, Direction to, VoxelShape shape) {
 		VoxelShape[] buffer = new VoxelShape[] { shape, Shapes.empty() };
 
@@ -124,18 +103,6 @@ public class GeneralUtil {
 		}
 		return buffer[0];
 	}
-
-//    public static void registerColorArmor(Item item, int defaultColor) {
-//        ColorHandlerRegistry.registerItemColors((stack, tintIndex) -> 0 < tintIndex ? 0x00FFFFFF : getColor(stack, defaultColor), item);
-//    }
-
-	// TODO
-//    static int getColor(ItemStack itemStack, int defaultColor) {
-//        CompoundTag displayTag = itemStack.getTagElement("display");
-//        if (null != displayTag && displayTag.contains("color", Tag.TAG_ANY_NUMERIC))
-//            return displayTag.getInt("color");
-//        return defaultColor;
-//    }
 
 	public enum LineConnectingType implements StringRepresentable {
 		NONE("none"),

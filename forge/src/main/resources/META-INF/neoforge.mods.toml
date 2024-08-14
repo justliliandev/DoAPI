@@ -3,9 +3,14 @@ loaderVersion = "[4,)"
 #issueTrackerURL = ""
 license = "LGPL-3.0-only"
 
+[[mixins]]
+config = "doapi.mixins.json"
+[[mixins]]
+config = "doapi-common.mixins.json"
+
 [[mods]]
 modId = "doapi"
-version = "1.2.15"
+version = "1.3.1"
 displayName = "[Let's Do] API"
 authors = "Cristelknight, BaumeisterJO"
 logoFile = "pack.png"

@@ -1,7 +1,6 @@
 package de.cristelknight.doapi.client.recipebook.screen.widgets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.cristelknight.doapi.client.recipebook.handler.AbstractPrivateRecipeScreenHandler;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,7 +21,11 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class PrivateAnimatedResultButton extends AbstractWidget {
-    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/recipe_book.png");
+    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/sprites/recipe_book/slot_craftable.png");
+
+    public static final ResourceLocation SLOT_CRAFTABLE_SPRITE = ResourceLocation.withDefaultNamespace("recipe_book/slot_craftable");
+    public static final ResourceLocation SLOT_UNCRAFTABLE_SPRITE = ResourceLocation.withDefaultNamespace("recipe_book/slot_uncraftable");
+
     private AbstractPrivateRecipeScreenHandler craftingScreenHandler;
     private Recipe<?> recipe;
     private float bounce;
@@ -49,33 +52,32 @@ public class PrivateAnimatedResultButton extends AbstractWidget {
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         Minecraft minecraftClient = Minecraft.getInstance();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-        int i = 29;
-        if (!craftingScreenHandler.hasIngredient(this.recipe)) {
-            i += 25;
+
+        ResourceLocation background = SLOT_CRAFTABLE_SPRITE;
+
+        if (!craftingScreenHandler.hasIngredient(this.getRecipe())) {
+            background = SLOT_UNCRAFTABLE_SPRITE;
         }
 
-        int j = 206;
-
         boolean bl = this.bounce > 0.0F;
-        Matrix4fStack poseStack = RenderSystem.getModelViewStack();
+        Matrix4fStack matrix4fStack = RenderSystem.getModelViewStack();
         if (bl) {
             float f = 1.0F + 0.1F * (float) Math.sin((this.bounce / 15.0F * 3.1415927F));
-            poseStack.pushMatrix();
-            poseStack.translate((this.getX() + 8), (this.getY() + 12), 0.0F);
-            poseStack.scale(f, f, 1.0F);
-            poseStack.translate((-(this.getX() + 8)), (-(this.getY() + 12)), 0.0F);
+            matrix4fStack.pushMatrix();
+            matrix4fStack.translate((this.getX() + 8), (this.getY() + 12), 0.0F);
+            matrix4fStack.scale(f, f, 1.0F);
+            matrix4fStack.translate((-(this.getX() + 8)), (-(this.getY() + 12)), 0.0F);
             RenderSystem.applyModelViewMatrix();
             this.bounce -= delta;
         }
 
-        guiGraphics.blit(BACKGROUND_TEXTURE, this.getX(), this.getY(), i, j, this.width, this.height);
+        guiGraphics.blitSprite(background, getX(), getY(), this.width, this.height);
         Recipe<?> recipe = this.getResult();
         int k = 4;
 
         guiGraphics.renderItem(recipe.getResultItem(minecraftClient.level.registryAccess()), this.getX() + k, this.getY() + k);
         if (bl) {
-            poseStack.popMatrix();
+            matrix4fStack.popMatrix();
             RenderSystem.applyModelViewMatrix();
         }
 
@@ -99,13 +101,13 @@ public class PrivateAnimatedResultButton extends AbstractWidget {
     }
 
     public List<Component> getOutputTooltip() {
-        ItemStack itemStack = this.getResult().getResultItem(Minecraft.getInstance().level.registryAccess());
+        ItemStack itemStack = this.currentRecipe().getResultItem(Minecraft.getInstance().level.registryAccess());
         return List.of(itemStack.getHoverName());
     }
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput builder) {
-        ItemStack itemStack = this.getResult().getResultItem(Minecraft.getInstance().level.registryAccess());
+        ItemStack itemStack = this.currentRecipe().getResultItem(Minecraft.getInstance().level.registryAccess());
         builder.add(NarratedElementType.TITLE, Component.translatable("narration.recipe", itemStack.getHoverName()));
 
         builder.add(NarratedElementType.USAGE, Component.translatable("narration.button.usage.hovered"));

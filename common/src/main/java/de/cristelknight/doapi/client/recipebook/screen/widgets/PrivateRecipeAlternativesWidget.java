@@ -25,7 +25,6 @@ import org.joml.Matrix4fStack;
 import java.util.Iterator;
 import java.util.List;
 
-// THIS CLASS IS NOT PORTED AND NOT TESTED, PLEASE AVOID USING IT
 @Environment(EnvType.CLIENT)
 @Deprecated()
 public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventListener {
@@ -34,7 +33,7 @@ public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventList
     private boolean visible;
     private int buttonX;
     private int buttonY;
-    private Recipe<?> recipe;
+    private RecipeHolder<?> recipe;
     @Nullable
     private Recipe<?> lastClickedRecipe;
     float time;
@@ -47,7 +46,7 @@ public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventList
         return this.visible;
     }
 
-    public Recipe<?> getResults() {
+    public RecipeHolder<?> getResults() {
         return this.recipe;
     }
 
@@ -56,7 +55,7 @@ public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventList
         return this.lastClickedRecipe;
     }
 
-    public void showAlternativesForResult(Recipe<?> recipe, int buttonX, int buttonY, int areaCenterX, int areaCenterY, float delta) {
+    public void showAlternativesForResult(RecipeHolder<?> recipe, int buttonX, int buttonY, int areaCenterX, int areaCenterY, float delta) {
         this.recipe = recipe;
 
         boolean bl = RBConfig.DEFAULT.getConfig().craftableToggle();
@@ -88,7 +87,7 @@ public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventList
         this.visible = true;
         this.alternativeButtons.clear();
 
-        //this.alternativeButtons.add(new CustomAlternativeButtonWidget(this.buttonX + 6, this.buttonY + 6, this.recipe, bl));
+        this.alternativeButtons.add(new CustomAlternativeButtonWidget(this.buttonX + 6, this.buttonY + 6, this.recipe, bl));
 
         this.lastClickedRecipe = null;
     }
@@ -108,7 +107,7 @@ public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventList
                 alternativeButtonWidget = var6.next();
             } while (!alternativeButtonWidget.mouseClicked(mouseX, mouseY, button));
 
-            //this.lastClickedRecipe = alternativeButtonWidget.recipe;
+            this.lastClickedRecipe = alternativeButtonWidget.recipe.value();
             return true;
         }
     }
@@ -181,33 +180,25 @@ public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventList
 
     @Environment(EnvType.CLIENT)
     private class CustomAlternativeButtonWidget extends AbstractWidget implements PlaceRecipe<Ingredient> {
-        final RecipeHolder<?> recipeHolder;
+        final RecipeHolder<?> recipe;
         private final boolean craftable;
         protected final List<InputSlot> slots = Lists.newArrayList();
 
-        public CustomAlternativeButtonWidget(int x, int y, RecipeHolder<?> recipeHolder1, boolean craftable) {
+        public CustomAlternativeButtonWidget(int x, int y, RecipeHolder<?> recipe, boolean craftable) {
             super(x, y, 200, 20, CommonComponents.EMPTY);
             this.width = 24;
             this.height = 24;
-            this.recipeHolder = recipeHolder1;
+            this.recipe = recipe;
             this.craftable = craftable;
-            this.alignRecipe(recipeHolder1);
+            this.alignRecipe(recipe);
         }
 
-        protected void alignRecipe(RecipeHolder<?> recipeHolder) {
-            //this.placeRecipe(3, 3, -1, recipeHolder, recipe.getIngredients().iterator(), 0);
+        protected void alignRecipe(RecipeHolder<?> recipe) {
+            this.placeRecipe(3, 3, -1, recipe, recipe.value().getIngredients().iterator(), 0);
         }
 
         protected void updateWidgetNarration(NarrationElementOutput builder) {
             this.defaultButtonNarrationText(builder);
-        }
-
-        public void addItemToSlot(Iterator<Ingredient> inputs, int slot, int amount, int gridX, int gridY) {
-            ItemStack[] itemStacks = inputs.next().getItems();
-            if (itemStacks.length != 0) {
-                this.slots.add(new InputSlot(3 + gridY * 7, 3 + gridX * 7, itemStacks));
-            }
-
         }
 
         @Override
@@ -223,27 +214,30 @@ public class PrivateRecipeAlternativesWidget implements Renderable, GuiEventList
                 j += 26;
             }
             guiGraphics.blit(BACKGROUND_TEXTURE, this.getX(), this.getY(), i, j, this.width, this.height);
-            Matrix4fStack poseStack = RenderSystem.getModelViewStack();
-            poseStack.pushMatrix();
-            poseStack.translate((this.getX() + 2), (this.getY() + 2), 125.0F);
+            Matrix4fStack matrix4fStack = RenderSystem.getModelViewStack();
+            matrix4fStack.pushMatrix();
+            matrix4fStack.translate((this.getX() + 2), (this.getY() + 2), 125.0F);
 
             for (InputSlot inputSlot : this.slots) {
-                poseStack.pushMatrix();
-                poseStack.translate(inputSlot.y, inputSlot.x, 0.0F);
-                poseStack.scale(0.375F, 0.375F, 1.0F);
-                poseStack.translate(-8.0F, -8.0F, 0.0F);
+                matrix4fStack.pushMatrix();
+                matrix4fStack.translate(inputSlot.y, inputSlot.x, 0.0F);
+                matrix4fStack.scale(0.375F, 0.375F, 1.0F);
+                matrix4fStack.translate(-8.0F, -8.0F, 0.0F);
                 RenderSystem.applyModelViewMatrix();
                 guiGraphics.renderItem(inputSlot.stacks[Mth.floor(PrivateRecipeAlternativesWidget.this.time / 30.0F) % inputSlot.stacks.length], 0, 0);
-                poseStack.popMatrix();
+                matrix4fStack.popMatrix();
             }
 
-            poseStack.popMatrix();
+            matrix4fStack.popMatrix();
             RenderSystem.applyModelViewMatrix();
         }
 
         @Override
-        public void addItemToSlot(Ingredient object, int i, int j, int k, int l) {
-            this.addItemToSlot(Ingredient.of(object.getItems()), i, j, k, l);
+        public void addItemToSlot(Ingredient ingredient, int slot, int amount, int gridX, int gridY) {
+            ItemStack[] itemStacks = ingredient.getItems();
+            if (itemStacks.length != 0) {
+                this.slots.add(new InputSlot(3 + gridY * 7, 3 + gridX * 7, itemStacks));
+            }
         }
 
         @Environment(EnvType.CLIENT)

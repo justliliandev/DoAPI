@@ -1,64 +1,56 @@
 package de.cristelknight.doapi.client.recipebook.screen.widgets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.cristelknight.doapi.client.recipebook.IRecipeBookGroup;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.StateSwitchingButton;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class PrivateRecipeGroupButtonWidget extends StateSwitchingButton {
+    private static final WidgetSprites SPRITES = new WidgetSprites(
+            ResourceLocation.withDefaultNamespace("recipe_book/tab"),
+            ResourceLocation.withDefaultNamespace("recipe_book/tab_selected"));
     private final IRecipeBookGroup group;
     private float bounce;
 
     public PrivateRecipeGroupButtonWidget(IRecipeBookGroup group) {
         super(0, 0, 35, 27, false);
         this.group = group;
-        this.initTextureValues(PrivateRecipeBookWidget.TEXTURES);
+        this.initTextureValues(SPRITES);
     }
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        PoseStack poseStack = guiGraphics.pose();
+        if (this.sprites == null) return;
         if (this.bounce > 0.0F) {
-            float f = 1.0F + 0.1F * (float) Math.sin((this.bounce / 15.0F * 3.1415927F));
-            poseStack.pushPose();
-            poseStack.translate((this.getX() + 8), (this.getY() + 12), 0.0);
-            poseStack.scale(1.0F, f, 1.0F);
-            poseStack.translate((-(this.getX() + 8)), (-(this.getY() + 12)), 0.0);
+            float g = 1.0F + 0.1F * (float)Math.sin(this.bounce / 15.0F * 3.1415927F);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate((float)(this.getX() + 8), (float)(this.getY() + 12), 0.0F);
+            guiGraphics.pose().scale(1.0F, g, 1.0F);
+            guiGraphics.pose().translate((float)(-(this.getX() + 8)), (float)(-(this.getY() + 12)), 0.0F);
         }
 
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, this.sprites.get(true, this.isStateTriggered));
+        Minecraft minecraft = Minecraft.getInstance();
         RenderSystem.disableDepthTest();
-        int i = this.getX();
-        int j = this.getY();
-        //TODO ???
-//        if (this.isStateTriggered) {
-//            i += this.xDiffTex;
-//        }
-//
-//        if (this.isHovered()) {
-//            j += this.yDiffTex;
-//        }
-
+        ResourceLocation resourceLocation = this.sprites.get(true, this.isStateTriggered);
         int k = this.getX();
         if (this.isStateTriggered) {
             k -= 2;
         }
 
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        guiGraphics.blit(this.sprites.get(true, this.isStateTriggered), k, this.getY(), i, j, this.width, this.height);
+        guiGraphics.blitSprite(resourceLocation, k, this.getY(), this.width, this.height);
         RenderSystem.enableDepthTest();
         this.renderIcons(guiGraphics);
         if (this.bounce > 0.0F) {
-            poseStack.popPose();
+            guiGraphics.pose().popPose();
             this.bounce -= delta;
         }
     }

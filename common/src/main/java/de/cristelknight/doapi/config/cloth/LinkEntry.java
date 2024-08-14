@@ -10,7 +10,6 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -24,8 +23,6 @@ public class LinkEntry extends AbstractConfigListEntry<Void> {
 
     public LinkEntry(Component fieldName, Button.OnPress onPress, WidgetSprites texture, int offset) {
         super(fieldName, false);
-        // TODO: CHECK
-        // button = new ImageButton(0, 0, 200, HEIGHT, 0, 0, offset, texture,200, 40, onPress);
         button = new ImageButton(0, 0, 200, HEIGHT, texture, onPress);
     }
 

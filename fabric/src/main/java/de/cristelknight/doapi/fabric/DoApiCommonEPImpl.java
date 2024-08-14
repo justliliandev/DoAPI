@@ -10,8 +10,6 @@ import com.terraformersmc.terraform.sign.api.block.TerraformWallSignBlock;
 import de.cristelknight.doapi.fabric.terraform.DoApiBoatTypeHolder;
 import de.cristelknight.doapi.terraform.boat.TerraformBoatType;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -62,7 +60,7 @@ public class DoApiCommonEPImpl {
     }
 
     public static void addSignSprite(ResourceLocation signTextureId) {
-        // TODO: Deprecated by Terraformor's API
+        // Deprecated by Terraformor's API
         //SpriteIdentifierRegistry.INSTANCE.addIdentifier(new Material(Sheets.SIGN_SHEET, signTextureId));
     }
 

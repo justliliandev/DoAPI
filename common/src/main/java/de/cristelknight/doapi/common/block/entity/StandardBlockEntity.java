@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import org.jetbrains.annotations.NotNull;
 
 public class StandardBlockEntity extends BlockEntity implements BlockEntityTicker<StandardBlockEntity> {
 
@@ -28,10 +27,9 @@ public class StandardBlockEntity extends BlockEntity implements BlockEntityTicke
 
     @Override
     protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        CompoundTag tag = new CompoundTag();
         if(stack == null) stack = ItemStack.EMPTY;
-        stack.save(provider);
-        compoundTag.put("stack", tag);
+
+        compoundTag.put("stack", stack.save(provider));
         super.saveAdditional(compoundTag, provider);
     }
 
@@ -39,7 +37,7 @@ public class StandardBlockEntity extends BlockEntity implements BlockEntityTicke
     protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
         super.loadAdditional(compoundTag, provider);
         CompoundTag tag = compoundTag.getCompound("stack");
-        stack = ItemStack.parse(this.level.registryAccess(), compoundTag.getCompound("Item")).get();
+        stack = ItemStack.parse(provider, tag).get();
     }
 
     public void fromItem(ItemStack stack){
