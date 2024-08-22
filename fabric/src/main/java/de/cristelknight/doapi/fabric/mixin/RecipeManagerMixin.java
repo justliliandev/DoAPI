@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import de.cristelknight.doapi.DoApi;
-import de.cristelknight.doapi.common.recipe.SimpleConditionalRecipe;
+import de.cristelknight.doapi.common.recipe.ConditionalRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
@@ -36,7 +36,7 @@ public class RecipeManagerMixin {
 
             JsonArray conditions = GsonHelper.getAsJsonArray(json, "conditions");
             for(JsonElement e : conditions){
-                if(SimpleConditionalRecipe.checkCondition(e.getAsJsonObject())) continue;
+                if(ConditionalRecipe.checkCondition(e.getAsJsonObject())) continue;
                 DoApi.LOGGER.debug("Condition for recipe: {} is not met!", r);
                 iterator.remove();
                 break;

@@ -1,6 +1,7 @@
 package de.cristelknight.doapi.client.render.feature;
 
 import com.google.common.collect.Sets;
+import de.cristelknight.doapi.DoApi;
 import de.cristelknight.doapi.Util;
 import de.cristelknight.doapi.api.DoApiAPI;
 import de.cristelknight.doapi.api.DoApiPlugin;
@@ -29,38 +30,60 @@ public class CustomArmorManager<T extends LivingEntity> {
     }
 
     public CustomArmorSet<T> addArmor(CustomArmorSet<T> model) {
+        DoApi.LOGGER.info("Adding armor " + model.toString());
         this.ARMORS.add(model);
         return model;
     }
 
     public @Nullable CustomArmorSet<T> getSet(Item item) {
-        for (CustomArmorSet<T> armor : this.ARMORS)
-            if (armor.getArmor().contains(item))
+        for (CustomArmorSet<T> armor : this.ARMORS) {
+            DoApi.LOGGER.info("Checking armor set model " + armor.toString());
+            if (armor.getArmor().contains(item)) {
+                DoApi.LOGGER.info("Found armor set model " + armor.toString());
                 return armor;
+            }
+        }
+        DoApi.LOGGER.info("No armor set model found");
         return null;
     }
 
     public @Nullable EntityModel<T> getModel(Item item, EquipmentSlot slot) {
-        if (this.ARMORS.isEmpty())
+        if (this.ARMORS.isEmpty()) {
+            DoApi.LOGGER.info("No armor models found");
             this.updateArmors();
-        for (CustomArmorSet<T> armor : this.ARMORS)
-            if (armor.getArmor().contains(item))
+        }
+        for (CustomArmorSet<T> armor : this.ARMORS) {
+            DoApi.LOGGER.info("Checking armor model " + armor.toString());
+            if (armor.getArmor().contains(item)) {
+                DoApi.LOGGER.info("Found armor model " + armor.toString());
                 return armor.getModel(slot);
+            }
+        }
+        DoApi.LOGGER.info("No armor model found");
         return null;
     }
 
     public @Nullable ResourceLocation getTexture(Item item, String string) {
-        if (this.ARMORS.isEmpty())
+        if (this.ARMORS.isEmpty()) {
+            DoApi.LOGGER.info("No armor textures found");
             this.updateArmors();
-        for (CustomArmorSet<T> armor : this.ARMORS)
-            if (armor.getArmor().contains(item))
+        }
+        for (CustomArmorSet<T> armor : this.ARMORS) {
+            DoApi.LOGGER.info("Checking armor texture " + armor.toString());
+            if (armor.getArmor().contains(item)) {
+                DoApi.LOGGER.info("Found armor texture " + armor.toString());
                 return armor.getTexture(string);
+            }
+        }
+        DoApi.LOGGER.info("No armor texture found");
         return null;
     }
 
     private void updateArmors() {
         List<DoApiAPI> apis = Util.getApis(DoApiAPI.class, "doapi", DoApiPlugin.class);
-        for (DoApiAPI api : apis)
+        for (DoApiAPI api : apis) {
+            DoApi.LOGGER.info("Registering armor models" + api.getClass().getPackage());
             api.registerArmor(this, this.modelLoader);
+        }
     }
 }
